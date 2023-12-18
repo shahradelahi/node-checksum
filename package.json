@@ -1,0 +1,70 @@
+{
+  "name": "@litehex/node-checksum",
+  "version": "0.1.0-canary.0",
+  "description": "A simple node.js module to calculate checksum with different algorithms",
+  "main": "dist/lib.js",
+  "module": "dist/lib.mjs",
+  "types": "dist/lib.d.ts",
+  "bin": {
+    "checksum": "dist/cli.js"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/lib.d.mts",
+        "default": "./dist/lib.mjs"
+      },
+      "require": {
+        "types": "./dist/lib.d.ts",
+        "default": "./dist/lib.js"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "format:check": "prettier --check \"**/*.{ts,md}\"",
+    "format": "prettier --write .",
+    "test": "mocha",
+    "prepublishOnly": "pnpm run format:check && pnpm run typecheck && pnpm run build"
+  },
+  "keywords": [
+    "checksum",
+    "hash",
+    "md5",
+    "sha1",
+    "sha256",
+    "sha512",
+    "node"
+  ],
+  "author": "Shahrad Elahi <shahrad@litehex.com> (https://github.com/shahradelahi)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shahradelahi/node-checksum.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shahradelahi/node-checksum/issues"
+  },
+  "homepage": "https://github.com/shahradelahi/node-checksum#readme",
+  "license": "GPL-3.0",
+  "packageManager": "pnpm@8.11.0",
+  "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.5",
+    "@types/yargs": "^17.0.32",
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0",
+    "prettier": "^3.1.1",
+    "tsup": "^8.0.1",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "commander": "^11.1.0"
+  }
+}
