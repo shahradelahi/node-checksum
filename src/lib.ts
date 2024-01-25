@@ -8,8 +8,14 @@ export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   data: Buffer | string,
 ): string {
+  const buffer = data instanceof Buffer ? data : Buffer.from(data);
+
+  if (algorithm === 'hex') {
+    return buffer.toString('hex');
+  }
+
   const hash = createHash(algorithm);
-  hash.update(data);
+  hash.update(buffer);
   return hash.digest('hex');
 }
 
