@@ -11,3 +11,8 @@ export type HashAlgorithm =
   | 'crc32';
 
 export type BufferLike = ArrayBuffer | Buffer | string;
+
+export interface HashedFile {
+  filename: string;
+  hash: string;
+}
