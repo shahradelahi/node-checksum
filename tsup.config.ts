@@ -1,11 +1,19 @@
 import { defineConfig } from 'tsup';
 
-export default defineConfig({
-  clean: true,
-  dts: true,
-  entry: ['src/cli.ts', 'src/lib.ts'],
-  format: ['cjs', 'esm'],
-  sourcemap: true,
-  target: 'esnext',
-  outDir: 'dist',
-});
+export default defineConfig([
+  {
+    clean: true,
+    dts: true,
+    entry: ['src/lib.ts'],
+    format: ['cjs', 'esm'],
+    target: 'esnext',
+    outDir: 'dist',
+  },
+  {
+    clean: true,
+    entry: ['src/cli.ts'],
+    format: ['esm'],
+    target: 'esnext',
+    outDir: 'dist',
+  },
+]);
