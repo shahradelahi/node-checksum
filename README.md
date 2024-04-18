@@ -5,13 +5,13 @@ Checksum utility for Node.js
 ### Install
 
 ```sh
-npm install --global @litehex/node-checksum
+npm i -g @litehex/node-checksum
 ```
 
 ### Usage
 
 ```text
-Usage: cli [options] [command] [file...]
+Usage: checksum [options] [command] [file...]
 
 Arguments:
   file                                file to hash (default: [])
@@ -62,4 +62,4 @@ $ echo -n "WRONG" | checksum verify package.json -a md5 --quiet # exit code 1
 
 ### License
 
-This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details
+[GPL-3.0](LICENSE) © [Shahrad Elahi](https://github.com/shahradelahi)
