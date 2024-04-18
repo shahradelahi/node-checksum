@@ -32,6 +32,22 @@
     "test": "mocha",
     "prepublishOnly": "pnpm run format:check && pnpm run typecheck && pnpm run build"
   },
+  "packageManager": "pnpm@8.15.0",
+  "devDependencies": {
+    "@types/chai": "^4.3.14",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.7",
+    "chai": "^5.1.0",
+    "mocha": "^10.4.0",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "crc-32": "^1.2.2"
+  },
   "keywords": [
     "checksum",
     "hash",
@@ -50,22 +66,5 @@
     "url": "https://github.com/shahradelahi/node-checksum/issues"
   },
   "homepage": "https://github.com/shahradelahi/node-checksum#readme",
-  "license": "GPL-3.0",
-  "packageManager": "pnpm@8.11.0",
-  "devDependencies": {
-    "@types/chai": "^4.3.11",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "^20.11.6",
-    "@types/yargs": "^17.0.32",
-    "chai": "^5.0.3",
-    "mocha": "^10.2.0",
-    "prettier": "^3.2.4",
-    "tsup": "^8.0.1",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "commander": "^11.1.0",
-    "crc-32": "^1.2.2"
-  }
+  "license": "GPL-3.0"
 }
