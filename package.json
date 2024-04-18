@@ -2,9 +2,9 @@
   "name": "@litehex/node-checksum",
   "version": "0.1.2",
   "description": "A simple node.js module to calculate checksum with different algorithms",
-  "main": "dist/lib.js",
-  "module": "dist/lib.mjs",
-  "types": "dist/lib.d.ts",
+  "main": "dist/lib.cjs",
+  "module": "dist/lib.js",
+  "types": "dist/lib.d.cts",
   "bin": {
     "checksum": "dist/cli.js"
   },
@@ -14,15 +14,16 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/lib.d.mts",
-        "default": "./dist/lib.mjs"
-      },
-      "require": {
         "types": "./dist/lib.d.ts",
         "default": "./dist/lib.js"
+      },
+      "require": {
+        "types": "./dist/lib.d.cts",
+        "default": "./dist/lib.cjs"
       }
     }
   },
+  "type": "module",
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
