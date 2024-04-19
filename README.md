@@ -14,11 +14,13 @@ npm i -g @litehex/node-checksum
 Usage: checksum [options] [command] [file...]
 
 Arguments:
-  file                                file to hash (default: [])
+  file                                file or directory to hash (default: [])
 
 Options:
   -a, --algorithm <algorithm>         hash algorithm (default: "sha256")
   -C, --context <context>             context to hash
+  -r, --recursive                     hash directories recursively (default: false)
+  -x, --exclude <exclude>             exclude patterns
   --cwd <cwd>                         current working directory (default: ".")
   -h, --help                          display help for command
 
@@ -37,6 +39,14 @@ $ checksum package.json --algorithm sha256
 $ checksum package.json README.md --algorithm md5
 > 85f96e23f8adb7e1b1faf6f6341fe768  package.json
 > ddc66b29b08d70b9accaa797d98ccdcc  README.md
+
+$ checksum --exclude "**/{.git,node_modules}/**" .
+> 62bbd7fec4e27c35cbf9a5058913c1e76ebe5d9dcb7ae6644f79c4cec1c6821b .gitignore
+> 88f36901e0a2735c58156120e9887ed0456918c8ffbf3a60eca0a9f221faa6ab .mocharc.json
+> 5f0fd6fa76c54ca557bdecdb6de94cec59745b4cd90469d79210c1554b679a18 .prettierignore
+> ...
+
+$ checksum --recursive src > checksum.txt
 
 $ checksum -C "Hello World" --algorithm md5
 > b10a8db164e0754105b7a99be72e3fe5

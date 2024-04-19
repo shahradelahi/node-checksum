@@ -1,10 +1,11 @@
-import type { BufferLike, HashAlgorithm } from '@/typings';
+import type { BufferLike, HashAlgorithm, HashedFile } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
-import { fsAccess } from '@/utils/fs-extra';
+import { fsAccess, readDirectory } from '@/utils/fs-extra';
 import crc32 from 'crc-32';
 
 import { type BinaryToTextEncoding, createHash } from 'node:crypto';
 import { promises } from 'node:fs';
+import { resolve } from 'node:path';
 
 export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
@@ -28,14 +29,6 @@ export function hash<Algorithm extends string = HashAlgorithm>(
 
 // --------------
 
-export function sha256(data: Buffer | string): string {
-  return hash('sha256', data);
-}
-
-export function md5(data: Buffer | string): string {
-  return hash('md5', data);
-}
-
 export async function hashFile<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   filePath: string,
@@ -51,6 +44,52 @@ export async function hashFile<Algorithm extends string = HashAlgorithm>(
 
   const content = await promises.readFile(filePath);
   return hash(algorithm, content);
+}
+
+export async function hashDirectory<Algorithm extends string = HashAlgorithm>(
+  algorithm: Algorithm,
+  directory: string,
+  options: {
+    recursive: boolean;
+    exclude?: string[];
+  } = { recursive: false },
+): Promise<HashedFile[]> {
+  const { exclude = [] } = options;
+
+  const { default: fg } = await import('fast-glob');
+  const excluded = await fg.glob(exclude, { onlyFiles: false });
+
+  function isExcluded(filePath: string) {
+    return excluded.some((path) => path === filePath);
+  }
+
+  const files = (await readDirectory(directory, options.recursive || false))
+    // Files only
+    .filter((adf) => !adf.directory && !adf.symlink)
+    // Filter out excluded files
+    .filter(({ path }) => !isExcluded(path));
+
+  const results: HashedFile[] = [];
+
+  for (const { path } of files) {
+    const hashed = await hashFile(algorithm, path);
+    results.push({
+      filename: resolve(directory, path),
+      hash: hashed,
+    });
+  }
+
+  return results;
+}
+
+// --------------
+
+export function sha256(data: BufferLike): string {
+  return hash('sha256', data);
+}
+
+export function md5(data: BufferLike): string {
+  return hash('md5', data);
 }
 
 export async function sha256File(filePath: string): Promise<string> {
