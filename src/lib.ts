@@ -1,6 +1,7 @@
 import type { BufferLike, HashAlgorithm, HashedFile } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';
+import { resolveGlob } from '@/utils/glob';
 import crc32 from 'crc-32';
 
 import { type BinaryToTextEncoding, createHash } from 'node:crypto';
@@ -75,6 +76,31 @@ export async function hashDirectory<Algorithm extends string = HashAlgorithm>(
     const hashed = await hashFile(algorithm, path);
     results.push({
       filename: resolve(directory, path),
+      hash: hashed,
+    });
+  }
+
+  return results;
+}
+
+export async function hashGlob<Algorithm extends string = HashAlgorithm>(
+  algorithm: Algorithm,
+  glob: string,
+  options: {
+    exclude?: string[];
+    cwd?: string;
+  } = {},
+): Promise<HashedFile[]> {
+  const { exclude = [] } = options;
+
+  const files = await resolveGlob(glob, { cwd: options.cwd, exclude, onlyFiles: true });
+
+  const results: HashedFile[] = [];
+
+  for (const filePath of files) {
+    const hashed = await hashFile(algorithm, filePath);
+    results.push({
+      filename: filePath,
       hash: hashed,
     });
   }
