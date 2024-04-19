@@ -1,7 +1,7 @@
-import { promises } from 'node:fs';
+import { type PathLike, promises } from 'node:fs';
 import { resolve } from 'node:path';
 
-export async function fsAccess(path: string): Promise<boolean> {
+export async function fsAccess(path: PathLike): Promise<boolean> {
   try {
     await promises.access(path);
     return true;
@@ -10,7 +10,7 @@ export async function fsAccess(path: string): Promise<boolean> {
   }
 }
 
-export async function isDirectory(path: string): Promise<boolean> {
+export async function isDirectory(path: PathLike): Promise<boolean> {
   try {
     const stat = await promises.stat(path);
     return stat.isDirectory();
