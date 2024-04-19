@@ -1,17 +1,17 @@
-import type { BufferLike, HashAlgorithm, HashedFile } from '@/typings';
+import type { BufferLike, HashAlgorithm, HashedFile, VerifyResult } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';
 import { resolveGlob } from '@/utils/glob';
 import crc32 from 'crc-32';
 
 import { type BinaryToTextEncoding, createHash } from 'node:crypto';
-import { promises } from 'node:fs';
+import { type PathLike, promises } from 'node:fs';
 import { resolve } from 'node:path';
 
 export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   data: BufferLike,
-  encoding: BinaryToTextEncoding = 'hex',
+  encoding: BinaryToTextEncoding = 'hex'
 ): string {
   const buffer = toBuffer(data);
 
@@ -32,7 +32,7 @@ export function hash<Algorithm extends string = HashAlgorithm>(
 
 export async function hashFile<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
-  filePath: string,
+  filePath: PathLike
 ): Promise<string> {
   if (!(await fsAccess(filePath))) {
     throw new Error('file does not exist');
@@ -53,7 +53,7 @@ export async function hashDirectory<Algorithm extends string = HashAlgorithm>(
   options: {
     recursive: boolean;
     exclude?: string[];
-  } = { recursive: false },
+  } = { recursive: false }
 ): Promise<HashedFile[]> {
   const { exclude = [] } = options;
 
@@ -89,9 +89,9 @@ export async function hashGlob<Algorithm extends string = HashAlgorithm>(
   options: {
     exclude?: string[];
     cwd?: string;
-  } = {},
+  } = {}
 ): Promise<HashedFile[]> {
-  const { exclude = [] } = options;
+  const { exclude = [], cwd = process.cwd() } = options;
 
   const files = await resolveGlob(glob, { cwd: options.cwd, exclude, onlyFiles: true });
 
@@ -100,7 +100,7 @@ export async function hashGlob<Algorithm extends string = HashAlgorithm>(
   for (const filePath of files) {
     const hashed = await hashFile(algorithm, filePath);
     results.push({
-      filename: filePath,
+      filename: resolve(cwd, filePath),
       hash: hashed,
     });
   }
@@ -124,6 +124,64 @@ export async function sha256File(filePath: string): Promise<string> {
 
 export async function md5File(filePath: string): Promise<string> {
   return hashFile('md5', filePath);
+}
+
+// --------------
+
+export async function verifyFile(
+  algorithm: HashAlgorithm,
+  filePath: PathLike,
+  checksum: string
+): Promise<boolean> {
+  const hashed = await hashFile(algorithm, filePath);
+  return hashed === checksum;
+}
+
+export async function verifyBatch(
+  algorithm: HashAlgorithm,
+  files: PathLike[],
+  checksumPath: PathLike
+): Promise<VerifyResult> {
+  const checksums = await readChecksumList(checksumPath);
+  console.log(checksums);
+  const result: VerifyResult = {
+    files: [],
+    success: true,
+  };
+
+  await Promise.all(
+    files.map(async (file) => {
+      const filename = resolve(file.toString());
+      console.log(filename, checksums[filename]);
+      const success =
+        // Check file exists in checksums
+        !!checksums[filename] &&
+        // Verify hash
+        (await verifyFile(algorithm, filename, checksums[filename]));
+
+      if (!success) {
+        result.success = false;
+      }
+
+      result.files.push({
+        filename,
+        result: success,
+      });
+    })
+  );
+
+  return result;
+}
+
+export async function readChecksumList(checksumPath: PathLike): Promise<Record<string, string>> {
+  const checksums = await promises.readFile(checksumPath, 'utf-8');
+  const result = {};
+  checksums
+    .split('\n')
+    .map((checksum) => checksum.trim().split(' '))
+    .filter((parts) => parts.length === 2)
+    .forEach((parts) => Object.assign(result, { [parts[1]]: parts[0] }));
+  return result;
 }
 
 // --------------

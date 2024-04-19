@@ -16,3 +16,11 @@ export interface HashedFile {
   filename: string;
   hash: string;
 }
+
+export interface VerifyResult {
+  files: {
+    filename: string;
+    result: boolean;
+  }[];
+  success: boolean;
+}

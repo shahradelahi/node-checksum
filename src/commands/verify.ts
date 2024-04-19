@@ -1,31 +1,53 @@
-import { hashFile } from '@/lib';
+import { hashFile, readChecksumList, verifyFile } from '@/lib';
 import { handleError } from '@/utils/handle-error';
 import { Argument, Command } from 'commander';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 
-export const verify = new Command()
+export const verifyCmd = new Command()
   .command('verify')
+  .alias('v')
   .description('verify checksum')
   .argument('<file>', 'file to verify')
   .addArgument(new Argument('<checksum>', 'checksum to verify against').argOptional())
   .option('-a, --algorithm <algorithm>', 'hash algorithm', 'sha256')
+  .option('-c, --check', 'read checksums from the LIST and verify them', false)
   .option('--cwd <cwd>', 'current working directory', process.cwd())
   .option('--quiet', 'do not log anything', false)
   .action(async (file, checksum, options) => {
     const { algorithm, quiet } = options;
+    console.log(file, checksum, options);
 
     try {
-      const hashed = await hashFile(algorithm, resolve(options.cwd, file));
+      if (options.check) {
+        let failures = 0;
 
-      if (checksum) {
-        if (hashed === checksum) {
-          controlledLog('match', quiet);
-          process.exitCode = 0;
-          return;
+        const list = await readChecksumList(resolve(options.cwd, file));
+        for (const [file, hash] of Object.entries(list)) {
+          const result = await verifyFile(algorithm, file, hash);
+          if (!result) {
+            failures++;
+          }
+          const relativePath = relative(options.cwd, file);
+          controlledLog(`${relativePath}: ${result ? 'OK' : 'FAILED'}`, quiet);
         }
 
-        controlledLog(`mismatch: expected ${checksum} but got ${hashed}`, quiet);
-        process.exitCode = 1;
+        if (failures > 0) {
+          controlledLog(`WARNING: ${failures} computed checksums did NOT match`, quiet);
+        }
+
+        process.exitCode = failures > 0 ? 1 : 0;
+        return;
+      }
+
+      const filePath = resolve(options.cwd, file);
+      const relativePath = relative(options.cwd, filePath);
+      const hashed = await hashFile(algorithm, filePath);
+
+      if (checksum) {
+        const matched = hashed === checksum;
+
+        controlledLog(`${relativePath}: ${matched ? 'OK' : 'FAILED'}`, quiet);
+        process.exitCode = matched ? 0 : 1;
         return;
       }
 
@@ -43,14 +65,10 @@ export const verify = new Command()
       }
 
       const stdChecksum = Buffer.concat(chunks).toString().trim();
-      if (hashed === stdChecksum) {
-        controlledLog('match', quiet);
-        process.exitCode = 0;
-        return;
-      }
+      const matched = hashed === stdChecksum;
 
-      controlledLog(`mismatch: expected ${stdChecksum} but got ${hashed}`, quiet);
-      process.exitCode = 1;
+      controlledLog(`${relativePath}: ${matched ? 'OK' : 'FAILED'}`, quiet);
+      process.exitCode = matched ? 0 : 1;
     } catch (e) {
       handleError(e);
     }
