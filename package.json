@@ -30,8 +30,8 @@
     "check": "tsc --noEmit",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "test": "mocha",
-    "prepublishOnly": "pnpm format:check && pnpm check && pnpm build"
+    "test": "mocha \"**/*.test.ts\"",
+    "prepublishOnly": "pnpm test && pnpm format:check && pnpm check && pnpm build"
   },
   "packageManager": "pnpm@8.15.0",
   "devDependencies": {
