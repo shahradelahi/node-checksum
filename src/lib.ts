@@ -11,7 +11,7 @@ import { resolve } from 'node:path';
 export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   data: BufferLike,
-  encoding: BinaryToTextEncoding = 'hex',
+  encoding: BinaryToTextEncoding = 'hex'
 ): string {
   const buffer = toBuffer(data);
 
@@ -32,7 +32,7 @@ export function hash<Algorithm extends string = HashAlgorithm>(
 
 export async function hashFile<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
-  filePath: PathLike,
+  filePath: PathLike
 ): Promise<string> {
   if (!(await fsAccess(filePath))) {
     throw new Error('file does not exist');
@@ -53,7 +53,7 @@ export async function hashDirectory<Algorithm extends string = HashAlgorithm>(
   options: {
     recursive: boolean;
     exclude?: string[];
-  } = { recursive: false },
+  } = { recursive: false }
 ): Promise<HashedFile[]> {
   const { exclude = [] } = options;
 
@@ -89,7 +89,7 @@ export async function hashGlob<Algorithm extends string = HashAlgorithm>(
   options: {
     exclude?: string[];
     cwd?: string;
-  } = {},
+  } = {}
 ): Promise<HashedFile[]> {
   const { exclude = [], cwd = process.cwd() } = options;
 
@@ -131,7 +131,7 @@ export async function md5File(filePath: string): Promise<string> {
 export async function verifyFile(
   algorithm: HashAlgorithm,
   filePath: PathLike,
-  checksum: string,
+  checksum: string
 ): Promise<boolean> {
   const hashed = await hashFile(algorithm, filePath);
   return hashed === checksum;
@@ -140,7 +140,7 @@ export async function verifyFile(
 export async function verifyBatch(
   algorithm: HashAlgorithm,
   files: PathLike[],
-  checksumPath: PathLike,
+  checksumPath: PathLike
 ): Promise<VerifyResult> {
   const checksums = await readChecksumList(checksumPath);
   console.log(checksums);
@@ -167,13 +167,13 @@ export async function verifyBatch(
         filename,
         result: success,
       });
-    }),
+    })
   );
 
   return result;
 }
 
-async function readChecksumList(checksumPath: PathLike): Promise<Record<string, string>> {
+export async function readChecksumList(checksumPath: PathLike): Promise<Record<string, string>> {
   const checksums = await promises.readFile(checksumPath, 'utf-8');
   const result = {};
   checksums

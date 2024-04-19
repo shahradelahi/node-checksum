@@ -20,20 +20,20 @@ describe('Verify', () => {
     const results = await hashGlob('md5', '**/*.ts', { exclude: ['**/node_modules/**'] });
     await promises.writeFile(
       checksumPath,
-      results.map((v) => `${v.hash} ${v.filename}`).join('\n'),
+      results.map((v) => `${v.hash} ${v.filename}`).join('\n')
     );
 
     console.log(
       'md5',
       results.map((v) => v.filename),
-      checksumPath,
+      checksumPath
     );
 
     // Verify checksum
     const verified = await verifyBatch(
       'md5',
       results.map((v) => v.filename),
-      checksumPath,
+      checksumPath
     );
 
     expect(verified.success).to.be.true;
