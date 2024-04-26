@@ -2,6 +2,7 @@ import { hash, hashDirectory, hashFile } from '@/lib';
 import { toBuffer } from '@/utils/buffer';
 import { isDirectory } from '@/utils/fs-extra';
 import { handleError } from '@/utils/handle-error';
+import logger from '@/utils/logger';
 import { Command } from 'commander';
 import { relative, resolve } from 'node:path';
 
@@ -17,12 +18,11 @@ export const hashCmd = new Command()
   .option('--cwd <cwd>', 'current working directory', process.cwd())
   .action(async (file, options, program) => {
     const { algorithm, context } = options;
-    console.log('Here!');
 
     try {
       if (context) {
         const hashed = hash(algorithm, context);
-        console.log(hashed);
+        logger.log(hashed);
 
         process.exitCode = 0;
         return;
@@ -34,14 +34,14 @@ export const hashCmd = new Command()
 
           const excluded = await fg.glob(options.exclude ?? [], { onlyFiles: false });
 
-          async function logHashed(filePath: string, named: boolean) {
+          const logHashed = async (filePath: string, named: boolean) => {
             const hashed = await hashFile(algorithm, resolve(options.cwd, filePath));
-            console.log(`${hashed}${named ? ` ${relative(options.cwd, filePath)}` : ''}`);
-          }
+            logger.log(`${hashed}${named ? ` ${relative(options.cwd, filePath)}` : ''}`);
+          };
 
-          function isExcluded(filePath: string) {
+          const isExcluded = (filePath: string) => {
             return excluded.some((glob) => glob === filePath);
-          }
+          };
 
           if (await isDirectory(filePath)) {
             const hashed = await hashDirectory(algorithm, filePath, {
@@ -79,7 +79,7 @@ export const hashCmd = new Command()
 
       const data = Buffer.concat(chunks);
       const hashed = hash(algorithm, data);
-      console.log(hashed);
+      logger.log(hashed);
     } catch (e) {
       handleError(e);
     }

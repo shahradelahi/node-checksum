@@ -143,7 +143,6 @@ export async function verifyBatch(
   checksumPath: PathLike
 ): Promise<VerifyResult> {
   const checksums = await readChecksumList(checksumPath);
-  console.log(checksums);
   const result: VerifyResult = {
     files: [],
     success: true,
@@ -152,7 +151,6 @@ export async function verifyBatch(
   await Promise.all(
     files.map(async (file) => {
       const filename = resolve(file.toString());
-      console.log(filename, checksums[filename]);
       const success =
         // Check file exists in checksums
         !!checksums[filename] &&
