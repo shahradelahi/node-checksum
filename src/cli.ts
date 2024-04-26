@@ -12,7 +12,7 @@ Checksum utility CLI
 Author: @shahradelahi, https://github.com/shahradelahi
 `
   )
-  .version('0.2.0')
+  .version('0.2.1')
   .addCommand(verifyCmd)
   .addCommand(hashCmd)
   .parse(process.argv)
