@@ -1,5 +1,6 @@
 import { hashFile, readChecksumList, verifyFile } from '@/lib';
 import { handleError } from '@/utils/handle-error';
+import logger from '@/utils/logger';
 import { Argument, Command } from 'commander';
 import { relative, resolve } from 'node:path';
 
@@ -15,7 +16,6 @@ export const verifyCmd = new Command()
   .option('--quiet', 'do not log anything', false)
   .action(async (file, checksum, options) => {
     const { algorithm, quiet } = options;
-    console.log(file, checksum, options);
 
     try {
       if (options.check) {
@@ -76,6 +76,6 @@ export const verifyCmd = new Command()
 
 function controlledLog(message: string, quiet: boolean) {
   if (!quiet) {
-    console.log(message);
+    logger.log(message);
   }
 }

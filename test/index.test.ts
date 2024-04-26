@@ -23,12 +23,6 @@ describe('Verify', () => {
       results.map((v) => `${v.hash} ${v.filename}`).join('\n')
     );
 
-    console.log(
-      'md5',
-      results.map((v) => v.filename),
-      checksumPath
-    );
-
     // Verify checksum
     const verified = await verifyBatch(
       'md5',

@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 export default {
   error(...args: unknown[]) {
     console.error('error:', ...args);
