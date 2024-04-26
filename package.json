@@ -1,6 +1,6 @@
 {
   "name": "@litehex/node-checksum",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A simple node.js module to calculate checksum with different algorithms",
   "main": "dist/lib.cjs",
   "module": "dist/lib.js",
