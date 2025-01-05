@@ -1,7 +1,8 @@
-import { promises } from 'node:fs';
+import { createReadStream, promises } from 'node:fs';
+import { Readable } from 'node:stream';
 import { expect } from 'chai';
 
-import { hashGlob, verifyBatch } from '@/lib';
+import { hashGlob, hashStream, verifyBatch } from '@/lib';
 
 it('should hash project file with glob', async () => {
   const results = await hashGlob('md5', '**/*.ts');
@@ -35,5 +36,25 @@ describe('Verify', () => {
 
     // Cleanup
     await promises.unlink(checksumPath);
+  });
+});
+
+describe('Hash', () => {
+  describe('Hash Stream', () => {
+    it('should create a read stream from package.json and hash it', async () => {
+      const stream = createReadStream('package.json');
+      const hash = await hashStream('md5', stream);
+      expect(hash).to.a('string');
+    });
+
+    it('should convert "hello" to md5 hash', async () => {
+      const data = Buffer.from('hello');
+
+      const readable = Readable.from([data]);
+
+      const hash = await hashStream('md5', readable);
+
+      expect(hash).to.equal('5d41402abc4b2a76b9719d911017c592');
+    });
   });
 });
