@@ -27,13 +27,13 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
-    "check": "tsc --noEmit",
-    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "lint": "pnpm typecheck && eslint .",
     "lint:fix": "eslint --fix .",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "test": "mocha \"**/*.test.ts\"",
-    "prepublishOnly": "pnpm test && pnpm format:check && pnpm check && pnpm build"
+    "prepublishOnly": "pnpm test && pnpm format:check && pnpm lint && pnpm build"
   },
   "packageManager": "pnpm@9.15.2",
   "devDependencies": {
