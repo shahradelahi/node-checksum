@@ -2,15 +2,26 @@
   "name": "@litehex/node-checksum",
   "version": "0.2.1",
   "description": "A simple node.js module to calculate checksum with different algorithms",
-  "main": "dist/lib.cjs",
-  "module": "dist/lib.js",
-  "types": "dist/lib.d.cts",
-  "bin": {
-    "checksum": "dist/cli.js"
-  },
-  "files": [
-    "dist/**"
+  "keywords": [
+    "checksum",
+    "hash",
+    "md5",
+    "sha1",
+    "sha256",
+    "sha512",
+    "node"
   ],
+  "homepage": "https://github.com/shahradelahi/node-checksum#readme",
+  "bugs": {
+    "url": "https://github.com/shahradelahi/node-checksum/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shahradelahi/node-checksum.git"
+  },
+  "license": "GPL-3.0",
+  "author": "Shahrad Elahi <shahrad@litehex.com> (https://github.com/shahradelahi)",
+  "type": "module",
   "exports": {
     ".": {
       "import": {
@@ -23,20 +34,32 @@
       }
     }
   },
-  "type": "module",
+  "main": "dist/lib.cjs",
+  "module": "dist/lib.js",
+  "types": "dist/lib.d.cts",
+  "bin": {
+    "checksum": "dist/cli.js"
+  },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "dev": "tsup --watch",
     "build": "tsup",
-    "typecheck": "tsc --noEmit",
+    "dev": "tsup --watch",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "pnpm typecheck && eslint .",
     "lint:fix": "eslint --fix .",
-    "format:check": "prettier --check .",
-    "format": "prettier --write .",
+    "prepublishOnly": "pnpm test && pnpm format:check && pnpm lint && pnpm build",
     "test": "mocha \"**/*.test.ts\"",
-    "prepublishOnly": "pnpm test && pnpm format:check && pnpm lint && pnpm build"
+    "typecheck": "tsc --noEmit"
   },
-  "packageManager": "pnpm@9.15.2",
   "prettier": "@shahrad/prettier-config",
+  "dependencies": {
+    "commander": "^13.0.0",
+    "crc-32": "^1.2.2",
+    "fast-glob": "^3.3.3"
+  },
   "devDependencies": {
     "@shahrad/eslint-config": "^1.0.0",
     "@shahrad/prettier-config": "^1.1.0",
@@ -52,28 +75,5 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
-  "dependencies": {
-    "commander": "^13.0.0",
-    "crc-32": "^1.2.2",
-    "fast-glob": "^3.3.3"
-  },
-  "keywords": [
-    "checksum",
-    "hash",
-    "md5",
-    "sha1",
-    "sha256",
-    "sha512",
-    "node"
-  ],
-  "author": "Shahrad Elahi <shahrad@litehex.com> (https://github.com/shahradelahi)",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shahradelahi/node-checksum.git"
-  },
-  "bugs": {
-    "url": "https://github.com/shahradelahi/node-checksum/issues"
-  },
-  "homepage": "https://github.com/shahradelahi/node-checksum#readme",
-  "license": "GPL-3.0"
+  "packageManager": "pnpm@9.15.2"
 }
