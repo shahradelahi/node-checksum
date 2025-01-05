@@ -37,6 +37,7 @@
   },
   "packageManager": "pnpm@9.15.2",
   "devDependencies": {
+    "@shahrad/eslint-config": "^1.0.0",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.5",
