@@ -1,9 +1,9 @@
 import { createHash, type BinaryToTextEncoding } from 'node:crypto';
-import { promises, type PathLike } from 'node:fs';
+import { createReadStream, promises, type PathLike } from 'node:fs';
 import { resolve } from 'node:path';
 import crc32 from 'crc-32';
 
-import type { BufferLike, HashAlgorithm, HashedFile, VerifyResult } from '@/typings';
+import type { BufferLike, HashAlgorithm, HashedFile, ReadableLike, VerifyResult } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';
 import { resolveGlob } from '@/utils/glob';
@@ -25,6 +25,29 @@ export function hash<Algorithm extends string = HashAlgorithm>(
 
   const hash = createHash(algorithm);
   hash.update(buffer);
+  return hash.digest(encoding);
+}
+
+/**
+ * Hashes the data from a readable stream using the specified algorithm.
+ *
+ * @template Algorithm - The type of the hash algorithm.
+ * @param {Algorithm} algorithm - The hash algorithm to use (e.g., 'sha256', 'md5').
+ * @param {ReadableLike} stream - The readable stream containing the data to hash.
+ * @param {BinaryToTextEncoding} [encoding='hex'] - The encoding for the hash output (default is 'hex').
+ * @returns {Promise<string>} - A promise that resolves to the hash of the data in the stream.
+ */
+export async function hashStream<Algorithm extends string = HashAlgorithm>(
+  algorithm: Algorithm,
+  stream: ReadableLike,
+  encoding: BinaryToTextEncoding = 'hex'
+): Promise<string> {
+  const hash = createHash(algorithm);
+
+  for await (const chunk of stream) {
+    hash.update(chunk);
+  }
+
   return hash.digest(encoding);
 }
 

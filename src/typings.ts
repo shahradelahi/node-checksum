@@ -1,3 +1,5 @@
+import type { Readable } from 'node:stream';
+
 export type HashAlgorithm =
   | 'sha1'
   | 'sha256'
@@ -11,6 +13,8 @@ export type HashAlgorithm =
   | 'crc32';
 
 export type BufferLike = ArrayBuffer | Buffer | string;
+
+export type ReadableLike = NodeJS.ReadableStream | Readable;
 
 export interface HashedFile {
   filename: string;
