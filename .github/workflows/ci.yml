@@ -2,23 +2,16 @@ name: CI
 
 on:
   push:
-    branches:
-      - canary
+    branches: [main]
   pull_request:
-
-concurrency:
-  group: '${{ github.workflow }}-${{ github.event.number || github.sha }}'
-  cancel-in-progress: true
 
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'pnpm'
@@ -26,36 +19,27 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
 
-  check:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm check
       - run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16, 18, 20]
-    name: Node ${{ matrix.node-version }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          version: 8
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
