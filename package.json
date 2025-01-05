@@ -36,8 +36,10 @@
     "prepublishOnly": "pnpm test && pnpm format:check && pnpm lint && pnpm build"
   },
   "packageManager": "pnpm@9.15.2",
+  "prettier": "@shahrad/prettier-config",
   "devDependencies": {
     "@shahrad/eslint-config": "^1.0.0",
+    "@shahrad/prettier-config": "^1.1.0",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.5",
