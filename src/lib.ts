@@ -3,7 +3,14 @@ import { createReadStream, promises, type PathLike } from 'node:fs';
 import { resolve } from 'node:path';
 import crc32 from 'crc-32';
 
-import type { BufferLike, HashAlgorithm, HashedFile, ReadableLike, VerifyResult } from '@/typings';
+import type {
+  BufferLike,
+  HashAlgorithm,
+  HashedFile,
+  HashFileOptions,
+  ReadableLike,
+  VerifyResult,
+} from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';
 import { resolveGlob } from '@/utils/glob';
@@ -53,10 +60,27 @@ export async function hashStream<Algorithm extends string = HashAlgorithm>(
 
 // --------------
 
+/**
+ * Hashes the data from a file using the specified algorithm.
+ *
+ * @template Algorithm - The type of the hash algorithm.
+ * @param {Algorithm} algorithm - The hash algorithm to use (e.g., 'sha256', 'md5').
+ * @param {PathLike} filePath - The path to the file to hash.
+ * @param {BinaryToTextEncoding} [encoding='hex'] - The encoding for the hash output (default is 'hex').
+ * @param {HashFileOptions} [options={}] - Additional options for reading the file.
+ * @param {NodeJS.BufferEncoding} [options.encoding] - Buffer encoding when reading the file.
+ * @param {number} [options.highWaterMark=131072] - The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. (default is 128KB)
+ * @returns {Promise<string>} - A promise that resolves to the hash of the file data.
+ * @throws {Error} - Throws an error if the file does not exist or is a directory.
+ */
 export async function hashFile<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
-  filePath: PathLike
+  filePath: PathLike,
+  encoding: BinaryToTextEncoding = 'hex',
+  options: HashFileOptions = {}
 ): Promise<string> {
+  const { highWaterMark = 131_072 } = options;
+
   if (!(await fsAccess(filePath))) {
     throw new Error('file does not exist');
   }
@@ -66,8 +90,13 @@ export async function hashFile<Algorithm extends string = HashAlgorithm>(
     throw new Error('cannot hash directory');
   }
 
-  const content = await promises.readFile(filePath);
-  return hash(algorithm, content);
+  const stream = createReadStream(filePath, {
+    flags: 'r',
+    highWaterMark,
+    encoding: options.encoding,
+  });
+
+  return hashStream(algorithm, stream, encoding);
 }
 
 export async function hashDirectory<Algorithm extends string = HashAlgorithm>(

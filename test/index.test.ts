@@ -57,4 +57,11 @@ describe('Hash', () => {
       expect(hash).to.equal('5d41402abc4b2a76b9719d911017c592');
     });
   });
+
+  describe('Hash File', () => {
+    it('should hash package.json with md5', async () => {
+      const hash = await hashGlob('md5', 'package.json');
+      expect(hash.length).to.equal(1);
+    });
+  });
 });
