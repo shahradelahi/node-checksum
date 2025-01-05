@@ -69,7 +69,7 @@ export async function hashStream<Algorithm extends string = HashAlgorithm>(
  * @param {BinaryToTextEncoding} [encoding='hex'] - The encoding for the hash output (default is 'hex').
  * @param {HashFileOptions} [options={}] - Additional options for reading the file.
  * @param {NodeJS.BufferEncoding} [options.encoding] - Buffer encoding when reading the file.
- * @param {number} [options.highWaterMark=131072] - The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. (default is 128KB)
+ * @param {number} [options.highWaterMark] - The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource.
  * @returns {Promise<string>} - A promise that resolves to the hash of the file data.
  * @throws {Error} - Throws an error if the file does not exist or is a directory.
  */
@@ -79,8 +79,6 @@ export async function hashFile<Algorithm extends string = HashAlgorithm>(
   encoding: BinaryToTextEncoding = 'hex',
   options: HashFileOptions = {}
 ): Promise<string> {
-  const { highWaterMark = 131_072 } = options;
-
   if (!(await fsAccess(filePath))) {
     throw new Error('file does not exist');
   }
@@ -92,7 +90,7 @@ export async function hashFile<Algorithm extends string = HashAlgorithm>(
 
   const stream = createReadStream(filePath, {
     flags: 'r',
-    highWaterMark,
+    highWaterMark: options.highWaterMark,
     encoding: options.encoding,
   });
 
