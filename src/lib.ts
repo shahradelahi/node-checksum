@@ -1,12 +1,12 @@
+import { createHash, type BinaryToTextEncoding } from 'node:crypto';
+import { promises, type PathLike } from 'node:fs';
+import { resolve } from 'node:path';
+import crc32 from 'crc-32';
+
 import type { BufferLike, HashAlgorithm, HashedFile, VerifyResult } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';
 import { resolveGlob } from '@/utils/glob';
-import crc32 from 'crc-32';
-
-import { type BinaryToTextEncoding, createHash } from 'node:crypto';
-import { type PathLike, promises } from 'node:fs';
-import { resolve } from 'node:path';
 
 export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,

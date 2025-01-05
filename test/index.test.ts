@@ -1,6 +1,7 @@
-import { hashGlob, verifyBatch } from '@/lib';
-import { expect } from 'chai';
 import { promises } from 'node:fs';
+import { expect } from 'chai';
+
+import { hashGlob, verifyBatch } from '@/lib';
 
 it('should hash project file with glob', async () => {
   const results = await hashGlob('md5', '**/*.ts');

@@ -36,44 +36,44 @@ Commands:
 
 ```shell
 $ checksum hash package.json --algorithm sha256
->d033084eeb1b83e54db79013c9676ff2c51b3ee24c5542787daaa8b526ff2004
+> d033084eeb1b83e54db79013c9676ff2c51b3ee24c5542787daaa8b526ff2004
 
 $ checksum h package.json README.md -a md5
->85f96e23f8adb7e1b1faf6f6341fe768 package.json
->ddc66b29b08d70b9accaa797d98ccdcc README.md
+package.json > 85f96e23f8adb7e1b1faf6f6341fe768
+README.md > ddc66b29b08d70b9accaa797d98ccdcc
 
 $ checksum hash --exclude "**/{.git,node_modules}/**" .
->62bbd7fec4e27c35cbf9a5058913c1e76ebe5d9dcb7ae6644f79c4cec1c6821b .gitignore
->88f36901e0a2735c58156120e9887ed0456918c8ffbf3a60eca0a9f221faa6ab .mocharc.json
->5f0fd6fa76c54ca557bdecdb6de94cec59745b4cd90469d79210c1554b679a18 .prettierignore
->...
+.gitignore > 62bbd7fec4e27c35cbf9a5058913c1e76ebe5d9dcb7ae6644f79c4cec1c6821b
+.mocharc.json > 88f36901e0a2735c58156120e9887ed0456918c8ffbf3a60eca0a9f221faa6ab
+.prettierignore > 5f0fd6fa76c54ca557bdecdb6de94cec59745b4cd90469d79210c1554b679a18
+> ...
 
-$ checksum h --recursive src >checksum.txt
+$ checksum h --recursive src > checksum.txt
 
 $ checksum h -C "Hello World" --algorithm md5
->b10a8db164e0754105b7a99be72e3fe5
+> b10a8db164e0754105b7a99be72e3fe5
 
 $ echo -n "Hello World" | checksum h -a sha1
->0a4d55a8d778e5022fab701977c5d840bbc486d0
+> 0a4d55a8d778e5022fab701977c5d840bbc486d0
 ```
 
 ###### Verify
 
 ```shell
 $ checksum verify package.json d033084eeb1b83e54db79013c9676ff2c51b3ee24c5542787daaa8b526ff2004 # exit code 0
->package.json: OK
+OK > package.json:
 
 $ echo -n "56bfa638dc6449196cf8110d693b6dab" | checksum v package.json -a md5 # exit code 0
->package.json: OK
+OK > package.json:
 
 $ checksum v -c checksum.txt # exit code 1
->tsup.config.ts: OK
->test/index.test.ts: FAILED
->...
->WARNING: 2 computed checksums did NOT match
+OK > tsup.config.ts:
+FAILED > test/index.test.ts:
+> ...
+2 > WARNING: computed checksums did NOT match
 
 $ echo -n "WRONG" | checksum v package.json -a md5 # exit code 1
->package.json: FAILED
+FAILED > package.json:
 
 $ echo -n "WRONG" | checksum v package.json -a md5 --quiet # exit code 1
 ```
