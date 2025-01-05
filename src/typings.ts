@@ -28,3 +28,9 @@ export interface VerifyResult {
   }[];
   success: boolean;
 }
+
+export interface HashFileOptions {
+  /** Buffer encoding when reading file */
+  encoding?: BufferEncoding;
+  highWaterMark?: number;
+}

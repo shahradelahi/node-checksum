@@ -2,7 +2,7 @@ import { createReadStream, promises } from 'node:fs';
 import { Readable } from 'node:stream';
 import { expect } from 'chai';
 
-import { hashGlob, hashStream, verifyBatch } from '@/lib';
+import { hashFile, hashGlob, hashStream, verifyBatch } from '@/lib';
 
 it('should hash project file with glob', async () => {
   const results = await hashGlob('md5', '**/*.ts');
@@ -54,6 +54,23 @@ describe('Hash', () => {
 
       const hash = await hashStream('md5', readable);
 
+      expect(hash).to.equal('5d41402abc4b2a76b9719d911017c592');
+    });
+  });
+
+  describe('Hash File', () => {
+    it('should hash package.json with md5', async () => {
+      const hash = await hashFile('md5', 'package.json');
+      expect(hash).to.a('string');
+    });
+
+    it('should create a hello.txt file and hash it', async () => {
+      after(async () => {
+        await promises.unlink('hello.txt').catch(() => {});
+      });
+
+      await promises.writeFile('hello.txt', 'hello');
+      const hash = await hashFile('md5', 'hello.txt');
       expect(hash).to.equal('5d41402abc4b2a76b9719d911017c592');
     });
   });
