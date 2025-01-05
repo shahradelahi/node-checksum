@@ -1,7 +1,7 @@
 #!/usr/bin/env node
+import { Command } from 'commander';
 
 import { hashCmd, verifyCmd } from '@/commands';
-import { Command } from 'commander';
 
 const program = new Command();
 program

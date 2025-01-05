@@ -34,6 +34,7 @@ Commands:
 
 ###### Hashing
 
+<!-- prettier-ignore -->
 ```shell
 $ checksum hash package.json --algorithm sha256
 >d033084eeb1b83e54db79013c9676ff2c51b3ee24c5542787daaa8b526ff2004
@@ -59,6 +60,7 @@ $ echo -n "Hello World" | checksum h -a sha1
 
 ###### Verify
 
+<!-- prettier-ignore -->
 ```shell
 $ checksum verify package.json d033084eeb1b83e54db79013c9676ff2c51b3ee24c5542787daaa8b526ff2004 # exit code 0
 >package.json: OK

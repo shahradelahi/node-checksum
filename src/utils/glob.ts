@@ -1,5 +1,5 @@
-import type { Options as InternalOptions } from 'fast-glob';
 import { resolve } from 'node:path';
+import type { Options as InternalOptions } from 'fast-glob';
 
 export interface GlobOptions extends InternalOptions {
   cwd?: string;

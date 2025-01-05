@@ -1,4 +1,4 @@
-import { type PathLike, promises } from 'node:fs';
+import { promises, type PathLike } from 'node:fs';
 import { resolve } from 'node:path';
 
 export async function fsAccess(path: PathLike): Promise<boolean> {
