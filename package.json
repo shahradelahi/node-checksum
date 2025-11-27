@@ -41,7 +41,8 @@
     "checksum": "dist/cli.js"
   },
   "files": [
-    "dist/**"
+    "dist/**",
+    "!**/*.d.cts"
   ],
   "scripts": {
     "build": "tsup",
@@ -56,24 +57,24 @@
   },
   "prettier": "@shahrad/prettier-config",
   "dependencies": {
-    "commander": "^13.0.0",
+    "commander": "^14.0.2",
     "crc-32": "^1.2.2",
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@shahrad/eslint-config": "^1.0.0",
-    "@shahrad/prettier-config": "^1.1.0",
-    "@types/chai": "^5.0.1",
+    "@shahrad/eslint-config": "^1.0.1",
+    "@shahrad/prettier-config": "^1.2.2",
+    "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.10.5",
-    "@typescript-eslint/eslint-plugin": "^8.19.0",
-    "chai": "^5.1.2",
-    "eslint": "^9.17.0",
-    "mocha": "^11.0.1",
-    "prettier": "^3.4.2",
-    "tsup": "^8.3.5",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "chai": "^6.2.1",
+    "eslint": "^9.39.1",
+    "mocha": "^11.7.4",
+    "prettier": "^3.7.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   },
-  "packageManager": "pnpm@9.15.2"
+  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
 }
