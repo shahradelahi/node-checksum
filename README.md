@@ -1,5 +1,6 @@
-# node-checksum
+# @litehex/node-checksum
 
+[![CI](https://github.com/shahradelahi/node-checksum/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/shahradelahi/node-checksum/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@litehex%2Fnode-checksum)](https://www.npmjs.com/package/@litehex/node-checksum)
 [![install size](https://packagephobia.com/badge?p=@litehex%2Fnode-checksum)](https://packagephobia.com/result?p=@litehex%2Fnode-checksum)
 [![MIT Licensed](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](https://opensource.org/licenses/MIT)
@@ -14,7 +15,7 @@ npm i -g @litehex/node-checksum # or npx @litehex/node-checksum help
 
 ### 📚 Documentation
 
-For all configuration options, please see [the API docs](https://paka.dev/npm/@litehex%2Fnode-checksum/api)
+For all configuration options, please see [the API docs](https://www.jsdocs.io/package/@litehex%2Fnode-checksum).
 
 ### 📖 CLI Usage
 
@@ -80,12 +81,12 @@ $ echo -n "WRONG" | checksum v package.json -a md5 # exit code 1
 $ echo -n "WRONG" | checksum v package.json -a md5 --quiet # exit code 1
 ```
 
-### 🤝 Contributing
+## 🤝 Contributing
 
-You can contribute to this project by opening an issue or a pull request
-on [GitHub](https://github.com/shahradelahi/node-checksum). Feel free to contribute, we care about your
-ideas and suggestions.
+Want to contribute? Awesome! To show your support is to star the project, or to raise issues on [GitHub](https://github.com/shahradelahi/node-checksum)
 
-### License
+Thanks again for your support, it is much appreciated! 🙏
 
-[MIT](LICENSE) © [Shahrad Elahi](https://github.com/shahradelahi)
+## License
+
+[MIT](/LICENSE) © [Shahrad Elahi](https://github.com/shahradelahi) and [contributors](https://github.com/shahradelahi/node-checksum/graphs/contributors).
