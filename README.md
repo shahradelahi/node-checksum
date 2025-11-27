@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@litehex%2Fnode-checksum)](https://www.npmjs.com/package/@litehex/node-checksum)
 [![install size](https://packagephobia.com/badge?p=@litehex%2Fnode-checksum)](https://packagephobia.com/result?p=@litehex%2Fnode-checksum)
-[![GPL-3.0 Licensed](https://img.shields.io/badge/License-GPL3.0-blue.svg?style=flat)](https://opensource.org/licenses/GPL-3.0)
+[![MIT Licensed](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](https://opensource.org/licenses/MIT)
 
 > Checksum utility Library written for Node.js + CLI
 
@@ -88,4 +88,4 @@ ideas and suggestions.
 
 ### License
 
-[GPL-3.0](LICENSE) © [Shahrad Elahi](https://github.com/shahradelahi)
+[MIT](LICENSE) © [Shahrad Elahi](https://github.com/shahradelahi)

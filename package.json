@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/shahradelahi/node-checksum.git"
   },
-  "license": "GPL-3.0",
+  "license": "MIT",
   "author": "Shahrad Elahi <shahrad@litehex.com> (https://github.com/shahradelahi)",
   "type": "module",
   "exports": {
