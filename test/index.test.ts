@@ -45,6 +45,8 @@ describe('Hash', () => {
       const stream = createReadStream('package.json');
       const hash = await hashStream('md5', stream);
       expect(hash).to.a('string');
+      const expected = await hashFile('md5', 'package.json');
+      expect(hash).to.equal(expected);
     });
 
     it('should convert "hello" to md5 hash', async () => {

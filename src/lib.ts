@@ -92,6 +92,7 @@ export async function hashFile<Algorithm extends string = HashAlgorithm>(
     flags: 'r',
     highWaterMark: options.highWaterMark,
     encoding: options.encoding,
+    autoClose: true,
   });
 
   return hashStream(algorithm, stream, encoding);
