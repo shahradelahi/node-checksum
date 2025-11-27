@@ -1,7 +1,7 @@
 import { createHash, type BinaryToTextEncoding } from 'node:crypto';
 import { createReadStream, promises, type PathLike } from 'node:fs';
 import { resolve } from 'node:path';
-import crc32 from 'crc-32';
+import { crc32, crc32c } from '@se-oss/crc32';
 
 import type {
   BufferLike,
@@ -27,7 +27,11 @@ export function hash<Algorithm extends string = HashAlgorithm>(
   }
 
   if (algorithm === 'crc32') {
-    return crc32.buf(buffer).toString(16);
+    return crc32(buffer).toString(16);
+  }
+
+  if (algorithm === 'crc32') {
+    return crc32c(buffer).toString(16);
   }
 
   const hash = createHash(algorithm);

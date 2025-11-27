@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import fg from 'fast-glob';
 import type { Options as InternalOptions } from 'fast-glob';
 
 export interface GlobOptions extends InternalOptions {
@@ -9,18 +10,13 @@ export interface GlobOptions extends InternalOptions {
 export async function resolveGlob(glob: string, options: GlobOptions): Promise<string[]> {
   const { exclude = [], ...internal } = options;
 
-  const { default: fg } = await import('fast-glob');
   const excluded = await fg.glob(exclude, internal);
-
-  function isExcluded(filePath: string) {
-    return excluded.some((path) => path === filePath);
-  }
-
   const files = await fg.glob(glob, internal);
+
   return (
     files
       // Filter out excluded files
-      .filter((file) => !isExcluded(file))
+      .filter((file) => !excluded.some((path) => path === file))
       // Resolve absolute paths
       .map((file) => resolve(options.cwd ?? process.cwd(), file))
   );
