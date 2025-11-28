@@ -1,11 +1,19 @@
 import { relative, resolve } from 'node:path';
 import { Command } from 'commander';
 
-import { hash, hashDirectory, hashFile } from '@/lib';
+import { hash, HashAlgorithm, hashDirectory, hashFile } from '@/lib';
 import logger from '@/logger';
 import { toBuffer } from '@/utils/buffer';
 import { isDirectory } from '@/utils/fs-extra';
 import { handleError } from '@/utils/handle-error';
+
+interface HashCommandOptions {
+  algorithm: HashAlgorithm;
+  context?: string;
+  recursive: boolean;
+  exclude?: string[];
+  cwd: string;
+}
 
 export const hashCmd = new Command()
   .command('hash')
@@ -17,7 +25,7 @@ export const hashCmd = new Command()
   .option('-r, --recursive', 'hash directories recursively', false)
   .option('-x, --exclude <exclude>', 'exclude patterns')
   .option('--cwd <cwd>', 'current working directory', process.cwd())
-  .action(async (file, options, program) => {
+  .action(async (file, options: HashCommandOptions, program) => {
     const { algorithm, context } = options;
 
     try {

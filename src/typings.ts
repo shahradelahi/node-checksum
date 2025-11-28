@@ -10,7 +10,8 @@ export type HashAlgorithm =
   | 'base64'
   | 'base64url'
   | 'hex'
-  | 'crc32';
+  | 'crc32'
+  | 'crc32c';
 
 export type BufferLike = ArrayBuffer | Buffer | string;
 
@@ -29,9 +30,19 @@ export interface VerifyResult {
   success: boolean;
 }
 
+export interface HashDirectoryOptions {
+  recursive?: boolean;
+  exclude?: string[];
+}
+
 export interface HashFileOptions {
   /** Buffer encoding when reading the file. */
   encoding?: BufferEncoding;
   /** The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. */
   highWaterMark?: number;
+}
+
+export interface HashGlobOptions {
+  cwd?: string;
+  exclude?: string[];
 }

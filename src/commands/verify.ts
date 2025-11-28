@@ -1,9 +1,16 @@
 import { relative, resolve } from 'node:path';
 import { Argument, Command } from 'commander';
 
-import { hashFile, readChecksumList, verifyFile } from '@/lib';
+import { HashAlgorithm, hashFile, readChecksumList, verifyFile } from '@/lib';
 import logger from '@/logger';
 import { handleError } from '@/utils/handle-error';
+
+interface VerifyCommandOptions {
+  algorithm: HashAlgorithm;
+  check: boolean;
+  cwd: string;
+  quiet: boolean;
+}
 
 export const verifyCmd = new Command()
   .command('verify')
@@ -15,7 +22,7 @@ export const verifyCmd = new Command()
   .option('-c, --check', 'read checksums from the LIST and verify them', false)
   .option('--cwd <cwd>', 'current working directory', process.cwd())
   .option('--quiet', 'do not log anything', false)
-  .action(async (file, checksum, options) => {
+  .action(async (file, checksum, options: VerifyCommandOptions) => {
     const { algorithm, quiet } = options;
 
     try {

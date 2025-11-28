@@ -2,18 +2,36 @@ import { createHash, type BinaryToTextEncoding } from 'node:crypto';
 import { createReadStream, promises, type PathLike } from 'node:fs';
 import { resolve } from 'node:path';
 import { crc32, crc32c } from '@se-oss/crc32';
+import fg from 'fast-glob';
 
 import type {
   BufferLike,
   HashAlgorithm,
+  HashDirectoryOptions,
   HashedFile,
   HashFileOptions,
+  HashGlobOptions,
   ReadableLike,
 } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';
 import { resolveGlob } from '@/utils/glob';
 
+/**
+ * Hashes data using a specified algorithm.
+ *
+ * @param algorithm The algorithm to use for hashing.
+ * @param data The data to hash.
+ * @param encoding The encoding to use for the output.
+ * @returns The hashed data as a string.
+ * @example
+ * ```ts
+ * import { hash } from '@litehex/node-checksum';
+ *
+ * const hashed = hash('sha256', 'hello world');
+ * console.log(hashed); // b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+ * ```
+ */
 export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   data: BufferLike,
@@ -39,13 +57,21 @@ export function hash<Algorithm extends string = HashAlgorithm>(
 }
 
 /**
- * Hashes the data from a readable stream using the specified algorithm.
+ * Hashes the data from a readable stream.
  *
- * @template Algorithm - The type of the hash algorithm.
- * @param {Algorithm} algorithm - The hash algorithm to use (e.g., 'sha256', 'md5').
- * @param {ReadableLike} stream - The readable stream containing the data to hash.
- * @param {BinaryToTextEncoding} [encoding='hex'] - The encoding for the hash output (default is 'hex').
- * @returns {Promise<string>} - A promise that resolves to the hash of the data in the stream.
+ * @param algorithm The hash algorithm to use.
+ * @param stream The readable stream to hash.
+ * @param encoding The encoding for the resulting hash.
+ * @returns A promise that resolves with the hash.
+ * @example
+ * ```ts
+ * import { createReadStream } from 'node:fs';
+ * import { hashStream } from '@litehex/node-checksum';
+ *
+ * const stream = createReadStream('package.json');
+ * const hash = await hashStream('sha256', stream);
+ * console.log(hash);
+ * ```
  */
 export async function hashStream<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
@@ -64,15 +90,21 @@ export async function hashStream<Algorithm extends string = HashAlgorithm>(
 // --------------
 
 /**
- * Hashes the data from a file using the specified algorithm.
+ * Hashes a file using the specified algorithm.
  *
- * @template Algorithm - The type of the hash algorithm.
- * @param {Algorithm} algorithm - The hash algorithm to use (e.g., 'sha256', 'md5').
- * @param {PathLike} filePath - The path to the file to hash.
- * @param {BinaryToTextEncoding} [encoding='hex'] - The encoding for the hash output (default is 'hex').
- * @param {HashFileOptions} [options={}] - Additional options for reading the file.
- * @returns {Promise<string>} - A promise that resolves to the hash of the file data.
- * @throws {Error} - Throws an error if the file does not exist or is a directory.
+ * @param algorithm The hash algorithm to use.
+ * @param filePath The path to the file to hash.
+ * @param encoding The encoding for the resulting hash.
+ * @param options Additional options for hashing the file.
+ * @returns A promise that resolves with the hash of the file.
+ * @throws If the file does not exist or is a directory.
+ * @example
+ * ```ts
+ * import { hashFile } from '@litehex/node-checksum';
+ *
+ * const hash = await hashFile('sha256', 'package.json');
+ * console.log(hash);
+ * ```
  */
 export async function hashFile<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
@@ -99,28 +131,35 @@ export async function hashFile<Algorithm extends string = HashAlgorithm>(
   return hashStream(algorithm, stream, encoding);
 }
 
+/**
+ * Hashes a directory and its contents.
+ *
+ * @param algorithm The hashing algorithm to use.
+ * @param directory The path to the directory.
+ * @param options Hashing options.
+ * @returns A promise that resolves to an array of hashed files.
+ * @example
+ * ```ts
+ * import { hashDirectory } from '@litehex/node-checksum';
+ *
+ * const hashedFiles = await hashDirectory('sha256', 'src', { recursive: true });
+ * console.log(hashedFiles);
+ * ```
+ */
 export async function hashDirectory<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   directory: string,
-  options: {
-    recursive: boolean;
-    exclude?: string[];
-  } = { recursive: false }
+  options: HashDirectoryOptions = { recursive: false }
 ): Promise<HashedFile[]> {
-  const { exclude = [] } = options;
+  const { exclude = [], recursive = false } = options;
 
-  const { default: fg } = await import('fast-glob');
   const excluded = await fg.glob(exclude, { onlyFiles: false });
 
-  function isExcluded(filePath: string) {
-    return excluded.some((path) => path === filePath);
-  }
-
-  const files = (await readDirectory(directory, options.recursive || false))
+  const files = (await readDirectory(directory, recursive))
     // Files only
     .filter((adf) => !adf.directory && !adf.symlink)
     // Filter out excluded files
-    .filter(({ path }) => !isExcluded(path));
+    .filter((f) => !excluded.some((path) => path === f.path));
 
   const results: HashedFile[] = [];
 
@@ -135,13 +174,25 @@ export async function hashDirectory<Algorithm extends string = HashAlgorithm>(
   return results;
 }
 
+/**
+ * Hashes files matching a glob pattern.
+ *
+ * @param algorithm The hashing algorithm to use.
+ * @param glob The glob pattern to match files.
+ * @param options Hashing options.
+ * @returns A promise that resolves to an array of hashed files.
+ * @example
+ * ```ts
+ * import { hashGlob } from '@litehex/node-checksum';
+ *
+ * const hashedFiles = await hashGlob('sha256', 'src/**\/*.ts');
+ * console.log(hashedFiles);
+ * ```
+ */
 export async function hashGlob<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   glob: string,
-  options: {
-    exclude?: string[];
-    cwd?: string;
-  } = {}
+  options: HashGlobOptions = {}
 ): Promise<HashedFile[]> {
   const { exclude = [], cwd = process.cwd() } = options;
 
@@ -162,18 +213,42 @@ export async function hashGlob<Algorithm extends string = HashAlgorithm>(
 
 // --------------
 
+/**
+ * Hashes the given data using the SHA256 algorithm.
+ *
+ * @param data The data to hash.
+ * @returns The hashed data as a string.
+ */
 export function sha256(data: BufferLike): string {
   return hash('sha256', data);
 }
 
+/**
+ * Hashes the given data using the MD5 algorithm.
+ *
+ * @param data The data to hash.
+ * @returns The hashed data as a string.
+ */
 export function md5(data: BufferLike): string {
   return hash('md5', data);
 }
 
+/**
+ * Hashes a file using the SHA256 algorithm.
+ *
+ * @param filePath The path to the file to hash.
+ * @returns A promise that resolves with the hash of the file.
+ */
 export async function sha256File(filePath: string): Promise<string> {
   return hashFile('sha256', filePath);
 }
 
+/**
+ * Hashes a file using the MD5 algorithm.
+ *
+ * @param filePath The path to the file to hash.
+ * @returns A promise that resolves with the hash of the file.
+ */
 export async function md5File(filePath: string): Promise<string> {
   return hashFile('md5', filePath);
 }

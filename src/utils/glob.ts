@@ -1,17 +1,16 @@
 import { resolve } from 'node:path';
-import fg from 'fast-glob';
-import type { Options as InternalOptions } from 'fast-glob';
+import fg, { type Options as FastGlobOptions } from 'fast-glob';
 
-export interface GlobOptions extends InternalOptions {
+export interface GlobOptions extends FastGlobOptions {
   cwd?: string;
   exclude?: string[];
 }
 
 export async function resolveGlob(glob: string, options: GlobOptions): Promise<string[]> {
-  const { exclude = [], ...internal } = options;
+  const { exclude = [], ...rest } = options;
 
-  const excluded = await fg.glob(exclude, internal);
-  const files = await fg.glob(glob, internal);
+  const excluded = await fg.glob(exclude, rest);
+  const files = await fg.glob(glob, rest);
 
   return (
     files
