@@ -2,10 +2,10 @@ import { relative, resolve } from 'node:path';
 import { Command } from 'commander';
 
 import { hash, hashDirectory, hashFile } from '@/lib';
+import logger from '@/logger';
 import { toBuffer } from '@/utils/buffer';
 import { isDirectory } from '@/utils/fs-extra';
 import { handleError } from '@/utils/handle-error';
-import logger from '@/utils/logger';
 
 export const hashCmd = new Command()
   .command('hash')

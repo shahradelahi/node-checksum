@@ -2,8 +2,8 @@ import { relative, resolve } from 'node:path';
 import { Argument, Command } from 'commander';
 
 import { hashFile, readChecksumList, verifyFile } from '@/lib';
+import logger from '@/logger';
 import { handleError } from '@/utils/handle-error';
-import logger from '@/utils/logger';
 
 export const verifyCmd = new Command()
   .command('verify')

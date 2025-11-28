@@ -4,7 +4,7 @@ export default defineConfig([
   {
     clean: true,
     dts: true,
-    entry: ['src/lib.ts'],
+    entry: { lib: 'src/lib/index.ts' },
     format: ['cjs', 'esm'],
     target: 'esnext',
     outDir: 'dist',
