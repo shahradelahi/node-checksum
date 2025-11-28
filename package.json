@@ -1,10 +1,11 @@
 {
   "name": "@litehex/node-checksum",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A simple node.js module to calculate checksum with different algorithms",
   "keywords": [
     "checksum",
     "hash",
+    "crc32",
     "md5",
     "sha1",
     "sha256",
