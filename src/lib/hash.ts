@@ -9,7 +9,6 @@ import type {
   HashedFile,
   HashFileOptions,
   ReadableLike,
-  VerifyResult,
 } from '@/typings';
 import { toBuffer } from '@/utils/buffer';
 import { fsAccess, readDirectory } from '@/utils/fs-extra';

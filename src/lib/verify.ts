@@ -44,12 +44,18 @@ export async function verifyBatch(
 }
 
 export async function readChecksumList(checksumPath: PathLike): Promise<Record<string, string>> {
-  const checksums = await promises.readFile(checksumPath, 'utf-8');
-  const result = {};
-  checksums
+  const checksumsContent = await promises.readFile(checksumPath, 'utf-8');
+  const result: Record<string, string> = {};
+  checksumsContent
     .split('\n')
-    .map((checksum) => checksum.trim().split(' '))
-    .filter((parts) => parts.length === 2)
-    .forEach((parts) => Object.assign(result, { [parts[1]]: parts[0] }));
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .forEach((line) => {
+      const parts = line.split(/\s+/);
+      const [hash, filename] = parts;
+      if (hash !== undefined && filename !== undefined) {
+        result[filename] = hash;
+      }
+    });
   return result;
 }
