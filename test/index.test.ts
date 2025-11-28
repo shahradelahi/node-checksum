@@ -11,7 +11,7 @@ it('should hash project file with glob', async () => {
 
   // Expect cli.ts and lib.ts to be included
   expect(results.some(({ filename }) => filename.endsWith('src/cli.ts'))).to.be.true;
-  expect(results.some(({ filename }) => filename.endsWith('src/lib.ts'))).to.be.true;
+  expect(results.some(({ filename }) => filename.endsWith('src/lib/index.ts'))).to.be.true;
 });
 
 describe('Verify', () => {
