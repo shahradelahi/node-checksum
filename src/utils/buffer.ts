@@ -5,9 +5,9 @@ export function toBuffer(data: BufferLike): Buffer {
     return data;
   }
 
-  if (data instanceof ArrayBuffer) {
-    return Buffer.from(data);
+  if (typeof data === 'string') {
+    return Buffer.from(data, 'utf8');
   }
 
-  return typeof data === 'string' ? Buffer.from(data, 'utf8') : Buffer.alloc(0);
+  return Buffer.from(data);
 }

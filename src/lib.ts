@@ -30,7 +30,7 @@ export function hash<Algorithm extends string = HashAlgorithm>(
     return crc32(buffer).toString(16);
   }
 
-  if (algorithm === 'crc32') {
+  if (algorithm === 'crc32c') {
     return crc32c(buffer).toString(16);
   }
 
@@ -72,8 +72,6 @@ export async function hashStream<Algorithm extends string = HashAlgorithm>(
  * @param {PathLike} filePath - The path to the file to hash.
  * @param {BinaryToTextEncoding} [encoding='hex'] - The encoding for the hash output (default is 'hex').
  * @param {HashFileOptions} [options={}] - Additional options for reading the file.
- * @param {NodeJS.BufferEncoding} [options.encoding] - Buffer encoding when reading the file.
- * @param {number} [options.highWaterMark] - The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource.
  * @returns {Promise<string>} - A promise that resolves to the hash of the file data.
  * @throws {Error} - Throws an error if the file does not exist or is a directory.
  */

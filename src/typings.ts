@@ -30,7 +30,8 @@ export interface VerifyResult {
 }
 
 export interface HashFileOptions {
-  /** Buffer encoding when reading file */
+  /** Buffer encoding when reading the file. */
   encoding?: BufferEncoding;
+  /** The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. */
   highWaterMark?: number;
 }
