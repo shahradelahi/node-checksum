@@ -25,8 +25,8 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(@ianvs/prettier-plugin-sort-imports@4.4.0(prettier@3.7.0))(prettier-plugin-packagejson@2.5.6(prettier@3.7.0))(prettier-plugin-sh@0.14.0(prettier@3.7.0))(prettier@3.7.0)
       '@shahrad/tsconfig':
-        specifier: ^1.2.0
-        version: 1.2.0
+        specifier: ^2.0.0
+        version: 2.0.0(typescript@5.9.3)
       '@types/chai':
         specifier: ^5.2.3
         version: 5.2.3
@@ -633,9 +633,11 @@ packages:
       prettier-plugin-packagejson: ^2.5
       prettier-plugin-sh: ^0.15
 
-  '@shahrad/tsconfig@1.2.0':
-    resolution: {integrity: sha512-5NM7tPrvUGF+VPqNgsjgWJ5aLJBcNiM/7aAsXw3PEZVek4Mfxq4vd7BLbjUsYd9HizgaNeCmfK5kIsxtCXp7/Q==}
-    engines: {node: '>=18'}
+  '@shahrad/tsconfig@2.0.0':
+    resolution: {integrity: sha512-skZvc46NXL5pYPJvYZOQ58uBtmv1a4JWVJgD1oMc7z0g7Jr2lZG3+O9Wp3fnzInBJIyvHJ4OQ8ScGT2rJkByuw==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      typescript: '>=7.0.0'
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -905,6 +907,7 @@ packages:
   eslint@9.39.1:
     resolution: {integrity: sha512-BhHmn2yNOFA9H9JmmIVKJmd288g9hrVRDkdoIgRCRuSySRUHH7r/DI6aAXW9T1WwUuY3DFgrcaqB+deURBLR5g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -1019,6 +1022,7 @@ packages:
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   globals@14.0.0:
@@ -1933,7 +1937,9 @@ snapshots:
       prettier-plugin-packagejson: 2.5.6(prettier@3.7.0)
       prettier-plugin-sh: 0.14.0(prettier@3.7.0)
 
-  '@shahrad/tsconfig@1.2.0': {}
+  '@shahrad/tsconfig@2.0.0(typescript@5.9.3)':
+    dependencies:
+      typescript: 5.9.3
 
   '@types/chai@5.2.3':
     dependencies:
