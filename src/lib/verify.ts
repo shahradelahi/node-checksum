@@ -1,5 +1,5 @@
 import { promises, type PathLike } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 import { hashFile } from '@/lib/hash';
 import type { HashAlgorithm, VerifyResult } from '@/typings';
@@ -25,7 +25,7 @@ export async function verifyFile(
   checksum: string
 ): Promise<boolean> {
   const hashed = await hashFile(algorithm, filePath);
-  return hashed === checksum;
+  return hashed.toLowerCase() === checksum.toLowerCase();
 }
 
 /**
@@ -48,19 +48,25 @@ export async function verifyBatch(
   files: PathLike[],
   checksumPath: PathLike
 ): Promise<VerifyResult> {
-  const checksums = await readChecksumList(checksumPath);
+  const rawChecksums = await readChecksumList(checksumPath);
+  const checksumDir = dirname(resolve(checksumPath.toString()));
+  const checksums = new Map<string, string>();
+
+  for (const [entryPath, digest] of Object.entries(rawChecksums)) {
+    checksums.set(resolve(entryPath), digest);
+    checksums.set(resolve(checksumDir, entryPath), digest);
+  }
+
   const result: VerifyResult = {
     files: [],
     success: true,
   };
+
   await Promise.all(
     files.map(async (file) => {
       const filename = resolve(file.toString());
-      const success =
-        // Check file exists in checksums
-        !!checksums[filename] &&
-        // Verify hash
-        (await verifyFile(algorithm, filename, checksums[filename]));
+      const expected = checksums.get(filename);
+      const success = expected !== undefined && (await verifyFile(algorithm, filename, expected));
       if (!success) {
         result.success = false;
       }
@@ -70,6 +76,7 @@ export async function verifyBatch(
       });
     })
   );
+
   return result;
 }
 
@@ -89,16 +96,17 @@ export async function verifyBatch(
 export async function readChecksumList(checksumPath: PathLike): Promise<Record<string, string>> {
   const checksumsContent = await promises.readFile(checksumPath, 'utf-8');
   const result: Record<string, string> = {};
-  checksumsContent
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .forEach((line) => {
-      const parts = line.split(/\s+/);
-      const [hash, filename] = parts;
-      if (hash !== undefined && filename !== undefined) {
-        result[filename] = hash;
-      }
-    });
+
+  for (const rawLine of checksumsContent.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) {
+      continue;
+    }
+    const match = /^(\S+)\s+\*?(.+)$/.exec(line);
+    if (match && match[1] !== undefined && match[2] !== undefined) {
+      result[match[2]] = match[1];
+    }
+  }
+
   return result;
 }

@@ -30,12 +30,13 @@ export const verifyCmd = new Command()
         let failures = 0;
 
         const list = await readChecksumList(resolve(options.cwd, file));
-        for (const [file, hash] of Object.entries(list)) {
-          const result = await verifyFile(algorithm, file, hash);
+        for (const [entry, hash] of Object.entries(list)) {
+          const filePath = resolve(options.cwd, entry);
+          const result = await verifyFile(algorithm, filePath, hash);
           if (!result) {
             failures++;
           }
-          const relativePath = relative(options.cwd, file);
+          const relativePath = relative(options.cwd, filePath);
           controlledLog(`${relativePath}: ${result ? 'OK' : 'FAILED'}`, quiet);
         }
 

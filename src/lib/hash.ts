@@ -32,6 +32,12 @@ import { resolveGlob } from '@/utils/glob';
  * console.log(hashed); // b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
  * ```
  */
+function formatCrc32(value: number, encoding: BinaryToTextEncoding = 'hex'): string {
+  const buf = Buffer.allocUnsafe(4);
+  buf.writeUInt32BE(value >>> 0, 0);
+  return buf.toString(encoding);
+}
+
 export function hash<Algorithm extends string = HashAlgorithm>(
   algorithm: Algorithm,
   data: BufferLike,
@@ -44,11 +50,11 @@ export function hash<Algorithm extends string = HashAlgorithm>(
   }
 
   if (algorithm === 'crc32') {
-    return crc32(buffer).toString(16);
+    return formatCrc32(crc32(buffer), encoding);
   }
 
   if (algorithm === 'crc32c') {
-    return crc32c(buffer).toString(16);
+    return formatCrc32(crc32c(buffer), encoding);
   }
 
   const hash = createHash(algorithm);
@@ -78,6 +84,25 @@ export async function hashStream<Algorithm extends string = HashAlgorithm>(
   stream: ReadableLike,
   encoding: BinaryToTextEncoding = 'hex'
 ): Promise<string> {
+  if (algorithm === 'crc32' || algorithm === 'crc32c') {
+    const fn = algorithm === 'crc32' ? crc32 : crc32c;
+    let seed = 0;
+
+    for await (const chunk of stream) {
+      seed = fn(toBuffer(chunk), seed);
+    }
+
+    return formatCrc32(seed, encoding);
+  }
+
+  if (Buffer.isEncoding(algorithm)) {
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(toBuffer(chunk));
+    }
+    return Buffer.concat(chunks).toString(algorithm);
+  }
+
   const hash = createHash(algorithm);
 
   for await (const chunk of stream) {

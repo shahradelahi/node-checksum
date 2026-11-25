@@ -2,7 +2,7 @@ import { createReadStream, promises } from 'node:fs';
 import { Readable } from 'node:stream';
 import { expect } from 'chai';
 
-import { hashFile, hashGlob, hashStream, verifyBatch } from '@/lib';
+import { hash, hashFile, hashGlob, hashStream, readChecksumList, verifyBatch } from '@/lib';
 
 it('should hash project file with glob', async () => {
   const results = await hashGlob('md5', '**/*.ts');
@@ -75,5 +75,45 @@ describe('Hash', () => {
       const hash = await hashFile('md5', 'hello.txt');
       expect(hash).to.equal('5d41402abc4b2a76b9719d911017c592');
     });
+  });
+
+  describe('CRC32 & CRC32C', () => {
+    it('should correctly zero-pad crc32 and crc32c digests', () => {
+      expect(hash('crc32', 'hello world')).to.equal('0d4a1185');
+      expect(hash('crc32', '')).to.equal('00000000');
+      expect(hash('crc32c', 'test-2')).to.have.lengthOf(8);
+    });
+
+    it('should support hashFile and hashStream with crc32 and crc32c', async () => {
+      await promises.writeFile('crc-test.txt', 'hello world');
+      try {
+        const fileHash = await hashFile('crc32', 'crc-test.txt');
+        expect(fileHash).to.equal('0d4a1185');
+
+        const stream = createReadStream('crc-test.txt');
+        const streamHash = await hashStream('crc32c', stream);
+        expect(streamHash).to.have.lengthOf(8);
+      } finally {
+        await promises.unlink('crc-test.txt').catch(() => {});
+      }
+    });
+  });
+});
+
+describe('Verify Batch & Checksum List', () => {
+  it('should verify relative paths and standard formats (two spaces, binary prefix)', async () => {
+    const checksumPath = 'checksums.txt';
+    await promises.writeFile('package.json', await promises.readFile('package.json', 'utf-8'));
+    const digest = await hashFile('sha256', 'package.json');
+
+    await promises.writeFile(checksumPath, `${digest}  package.json\n${digest} *package.json\n`);
+
+    const list = await readChecksumList(checksumPath);
+    expect(list['package.json']).to.equal(digest);
+
+    const verified = await verifyBatch('sha256', ['package.json'], checksumPath);
+    expect(verified.success).to.be.true;
+
+    await promises.unlink(checksumPath);
   });
 });
